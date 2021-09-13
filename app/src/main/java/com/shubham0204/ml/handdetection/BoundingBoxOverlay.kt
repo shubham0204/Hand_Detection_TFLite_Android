@@ -23,7 +23,7 @@ class BoundingBoxOverlay(context : Context, attributeSet : AttributeSet)
     var handBoundingBoxes: List<Prediction>? = null
 
     // This var is assigned in MainActivity.kt
-    var isFrontCameraOn = true
+    var isFrontCameraOn = false
 
     private var output2OverlayTransform: Matrix = Matrix()
     private val boxPaint = Paint().apply {

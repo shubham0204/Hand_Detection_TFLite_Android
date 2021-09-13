@@ -32,8 +32,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var frameAnalyser : FrameAnalyser
     private var frameAnalysis: ImageAnalysis? = null
 
-    private var isFrontCameraOn = true
-    private val defaultCameraFacing = CameraSelector.LENS_FACING_FRONT
+    private var isFrontCameraOn = false
+    private val defaultCameraFacing = CameraSelector.LENS_FACING_BACK
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
