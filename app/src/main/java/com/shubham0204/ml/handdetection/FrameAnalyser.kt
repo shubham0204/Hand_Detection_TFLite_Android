@@ -25,7 +25,7 @@ import kotlinx.coroutines.withContext
 // Image Analyser for performing hand detection on camera frames.
 class FrameAnalyser(
     private val handDetectionModel: HandDetectionModel ,
-    private val drawingOverlay: BoundingBoxOverlay ) : ImageAnalysis.Analyzer {
+    private val boundingBoxOverlay: BoundingBoxOverlay ) : ImageAnalysis.Analyzer {
 
     private var frameBitmap : Bitmap? = null
     private var isFrameProcessing = false
@@ -39,16 +39,17 @@ class FrameAnalyser(
         }
         isFrameProcessing = true
 
+        // Get the `Bitmap` of the current frame ( with corrected rotation ).
         frameBitmap = BitmapUtils.imageToBitmap( image.image!! , image.imageInfo.rotationDegrees )
+        image.close()
+
         // Configure frameHeight and frameWidth for output2overlay transformation matrix.
-        if ( !drawingOverlay.areDimsInit ) {
+        if ( !boundingBoxOverlay.areDimsInit ) {
             Logger.logInfo( "Passing dims to overlay..." )
-            drawingOverlay.frameHeight = frameBitmap!!.height
-            drawingOverlay.frameWidth = frameBitmap!!.width
+            boundingBoxOverlay.frameHeight = frameBitmap!!.height
+            boundingBoxOverlay.frameWidth = frameBitmap!!.width
         }
 
-        // Get the `Bitmap` of the current frame ( with corrected rotation ).
-        image.close()
         CoroutineScope( Dispatchers.Main ).launch {
             runModel( frameBitmap!! )
         }
@@ -56,16 +57,16 @@ class FrameAnalyser(
 
 
     private suspend fun runModel( inputImage : Bitmap ) = withContext( Dispatchers.Default ) {
-        // Compute the depth given the frame Bitmap.
+        // Compute bounding boxes for the given frame,
         val predictions = handDetectionModel.flow( inputImage )
         withContext( Dispatchers.Main ) {
             // Notify that the current frame is processed and the pipeline is
             // ready for the next frame.
             isFrameProcessing = false
-            // Submit the depth Bitmap to the DrawingOverlay and update it.
-            // Note, calling `drawingOverlay.invalidate()` here will call `onDraw()` in DrawingOverlay.kt.
-            drawingOverlay.handBoundingBoxes = predictions
-            drawingOverlay.invalidate()
+            // Submit the predictions to the BoundingBoxOverlay and update it.
+            // Note, calling `drawingOverlay.invalidate()` here will call `onDraw()` in BoundingBoxOverlay.kt.
+            boundingBoxOverlay.handBoundingBoxes = predictions
+            boundingBoxOverlay.invalidate()
         }
     }
 

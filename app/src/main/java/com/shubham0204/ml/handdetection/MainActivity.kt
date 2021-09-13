@@ -38,7 +38,7 @@ import java.util.concurrent.Executors
 class MainActivity : AppCompatActivity() {
 
     private lateinit var previewView : PreviewView
-    private lateinit var drawingOverlay: BoundingBoxOverlay
+    private lateinit var boundingBoxOverlay: BoundingBoxOverlay
 
     private var preview: Preview? = null
     private lateinit var cameraProviderListenableFuture : ListenableFuture<ProcessCameraProvider>
@@ -60,14 +60,14 @@ class MainActivity : AppCompatActivity() {
 
         previewView = findViewById( R.id.camera_preview_view )
 
-        // Make sure that the DrawingOverlay remains on top
+        // Make sure that the BoundingBoxOverlay remains on top
         // See this SO answer -> https://stackoverflow.com/a/28883273/10878733
-        drawingOverlay = findViewById( R.id.drawing_overlay )
-        drawingOverlay.setWillNotDraw(false)
-        drawingOverlay.setZOrderOnTop(true)
+        boundingBoxOverlay = findViewById( R.id.drawing_overlay )
+        boundingBoxOverlay.setWillNotDraw(false)
+        boundingBoxOverlay.setZOrderOnTop(true)
 
         val handDetectionModel = HandDetectionModel( this )
-        frameAnalyser = FrameAnalyser( handDetectionModel , drawingOverlay )
+        frameAnalyser = FrameAnalyser( handDetectionModel , boundingBoxOverlay )
 
         val flipCameraFAB = findViewById<FloatingActionButton>( R.id.flip_camera_fab )
         flipCameraFAB.setOnClickListener {
@@ -78,8 +78,8 @@ class MainActivity : AppCompatActivity() {
             // Alert the DrawingOverlay regarding the change in lens facing.
             // This is important as for the front camera, we need to flip ( vertically ) the frames to
             // draw them on the overlay.
-            drawingOverlay.isFrontCameraOn = !isFrontCameraOn
-            drawingOverlay.areDimsInit = false
+            boundingBoxOverlay.isFrontCameraOn = !isFrontCameraOn
+            boundingBoxOverlay.areDimsInit = false
             isFrontCameraOn = !isFrontCameraOn
         }
 

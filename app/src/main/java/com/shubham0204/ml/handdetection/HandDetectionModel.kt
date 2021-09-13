@@ -33,29 +33,36 @@ import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 import kotlin.math.max
 import kotlin.math.min
 
+// Helper class for Hand detection TFLite model
 class HandDetectionModel( context: Context ) {
 
-    private val modelName = "model.tflite"
+    // I/O details for the hand detection model.
+    // Refer to the comments of this script ->
+    // https://github.com/tensorflow/models/blob/master/research/object_detection/export_tflite_ssd_graph.py
+    // For quantization, use the tflite_convert utility as described in the conversion notebook ( README ).
     private val modelInputImageDim = 300
     private val isQuantized = false
-    private val outputConfidenceThreshold = 0.7f
     private val maxDetections = 10
-    private val numThreads = 4
-    private val boundingBoxesTensorShape = intArrayOf( 1 , maxDetections , 4 )
-    private val confidenceScoresTensorShape = intArrayOf( 1 , maxDetections )
-    private val classesTensorShape = intArrayOf( 1 , maxDetections )
-    private val numBoxesTensorShape = intArrayOf( 1 )
-    private var interpreter : Interpreter
-
+    private val boundingBoxesTensorShape = intArrayOf( 1 , maxDetections , 4 ) // [ 1 , 10 , 4 ]
+    private val confidenceScoresTensorShape = intArrayOf( 1 , maxDetections ) // [ 1 , 10 ]
+    private val classesTensorShape = intArrayOf( 1 , maxDetections ) // [ 1 , 10 ]
+    private val numBoxesTensorShape = intArrayOf( 1 ) // [ 1 , ]
+    // Input tensor processor for quantized and non-quantized versions of the model.
     private val inputImageProcessorQuantized = ImageProcessor.Builder()
         .add( ResizeOp( modelInputImageDim , modelInputImageDim , ResizeOp.ResizeMethod.BILINEAR ) )
         .add( CastOp( DataType.FLOAT32 ) )
         .build()
-
     private val inputImageProcessorNonQuantized = ImageProcessor.Builder()
         .add( ResizeOp( modelInputImageDim , modelInputImageDim , ResizeOp.ResizeMethod.BILINEAR ) )
         .add( NormalizeOp( 128.5f , 128.5f ) )
         .build()
+
+    // See app/src/main/assets for the TFLite model.
+    private val modelName = "model.tflite"
+    private val numThreads = 4
+    private var interpreter : Interpreter
+    // Confidence threshold for NMS
+    private val outputConfidenceThreshold = 0.7f
 
     private var inputFrameWidth = 0
     private var inputFrameHeight = 0
@@ -93,6 +100,7 @@ class HandDetectionModel( context: Context ) {
 
 
     private fun run( inputImage : Bitmap ) : List<Prediction> {
+        // Store the width and height of the input frames as they will be used for future transformations.
         inputFrameWidth = inputImage.width
         inputFrameHeight = inputImage.height
 
@@ -125,10 +133,13 @@ class HandDetectionModel( context: Context ) {
 
     private fun processOutputs( scores : TensorBuffer ,
                                 boundingBoxes : TensorBuffer ) : List<Prediction> {
+        // Flattened version of array of shape [ 1 , maxDetections ] ( size = maxDetections )
         val scoresFloatArray = scores.floatArray
+        // Flattened version of array of shape [ 1 , maxDetections , 4 ] ( size = maxDetections * 4 )
         val boxesFloatArray = boundingBoxes.floatArray
         val predictions = ArrayList<Prediction>()
         for ( i in boxesFloatArray.indices step 4 ) {
+            // Store predictions which have a confidence > threshold
             if ( scoresFloatArray[ i / 4 ] >= outputConfidenceThreshold ) {
                 predictions.add(
                     Prediction(
@@ -142,6 +153,7 @@ class HandDetectionModel( context: Context ) {
     }
 
 
+    // Transform the normalized bounding box coordinates relative to the input frames.
     private fun getRect( coordinates : FloatArray ) : Rect {
         return Rect(
             max( (coordinates[ 1 ] * inputFrameWidth).toInt() , 1 ),

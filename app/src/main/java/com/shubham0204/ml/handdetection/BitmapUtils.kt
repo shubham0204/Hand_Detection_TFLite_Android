@@ -43,35 +43,6 @@ class BitmapUtils {
         }
 
 
-        // Resize the given Bitmap with given `targetWidth` and `targetHeight`.
-        // See this SO answer -> https://stackoverflow.com/a/65574102/10878733
-        fun resizeBitmap( src : Bitmap , targetWidth : Int , targetHeight : Int ) : Bitmap {
-            return Bitmap.createScaledBitmap( src , targetWidth , targetHeight , true )
-        }
-
-
-        // Flip the given `Bitmap` vertically.
-        // See this SO answer -> https://stackoverflow.com/a/36494192/10878733
-        fun flipBitmap( source: Bitmap ): Bitmap {
-            val matrix = Matrix()
-            matrix.postScale(-1f, 1f, source.width / 2f, source.height / 2f)
-            return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
-        }
-
-
-        fun byteBufferToBitmap( imageArray : FloatArray , imageDim : Int ) : Bitmap {
-            val pixels = imageArray.map { it.toInt() }.toIntArray()
-            val bitmap = Bitmap.createBitmap(imageDim, imageDim, Bitmap.Config.RGB_565 );
-            for ( i in 0 until imageDim ) {
-                for ( j in 0 until imageDim ) {
-                    val p = pixels[ i * imageDim + j ]
-                    bitmap.setPixel( j , i , Color.rgb( p , p , p ))
-                }
-            }
-            return bitmap
-        }
-
-
         // Convert android.media.Image to android.graphics.Bitmap and rotate it by `rotationDegrees`
         // See the SO answer -> https://stackoverflow.com/a/44486294/10878733
         fun imageToBitmap( image : Image , rotationDegrees : Int ): Bitmap {

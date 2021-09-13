@@ -16,5 +16,6 @@ package com.shubham0204.ml.handdetection
 
 import android.graphics.Rect
 
+// Class for holding the bounding box and the confidence for a particular prediction.
 data class Prediction(val boundingBox : Rect, val confidence : Float ) {
 }

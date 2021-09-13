@@ -73,9 +73,10 @@ class BoundingBoxOverlay(context : Context, attributeSet : AttributeSet)
             val viewHeight = canvas.height.toFloat()
             val xFactor: Float = viewWidth / frameWidth.toFloat()
             val yFactor: Float = viewHeight / frameHeight.toFloat()
-            // Scale and mirror the coordinates ( required for front lens )
+            // Scale the coordinates
             output2OverlayTransform.preScale(xFactor, yFactor)
             if ( isFrontCameraOn ) {
+                // Mirror the coordinates when using the front lens.
                 output2OverlayTransform.postScale(-1f, 1f, viewWidth / 2f, viewHeight / 2f)
                 Logger.logInfo( "Transformation matrix configured for front camera." )
             }
@@ -87,9 +88,7 @@ class BoundingBoxOverlay(context : Context, attributeSet : AttributeSet)
         else {
             for ( prediction in handBoundingBoxes!! ) {
                 val rect = prediction.boundingBox.toRectF()
-                Logger.logInfo( "Rect before ${rect.toShortString()}")
                 output2OverlayTransform.mapRect( rect )
-                Logger.logInfo( "Rect before ${rect.toShortString()}")
                 canvas?.drawRoundRect( rect , 16f, 16f, boxPaint )
                 canvas?.drawText(
                     prediction.confidence.toString(),
