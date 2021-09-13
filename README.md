@@ -11,6 +11,28 @@ found here --> [Google_Colab_Notebooks/Hand_Tracking_Model_TFLite_Conversion.ipy
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/shubham0204/Google_Colab_Notebooks/blob/main/Hand_Tracking_Model_TFLite_Conversion.ipynb)
 
+## Project Information
+
+The following features are included in the project,
+
+1. Well documented code with links to SO answers wherever required.
+2. Uses latest APIs like [CameraX](https://developer.android.com/training/camerax) and [Kotlin Coroutines](https://developer.android.com/kotlin/coroutines).
+3. No use of heavy packages like OpenCV to process and display the depth map. The application is coded in a
+   *Android* friendly manner.
+4. Works for both front and rear camera and also in portrait and landscape orientations.
+
+Here are the details of the Android project,
+
+```
+compileSdk 30
+applicationId "com.shubham0204.ml.handdetection"
+minSdk 23
+targetSdk 30
+androidGradlePluginVersion 7.0.0
+gradlePluginVersion 7.0.2
+```
+
+
 ---
 
 ## LICENSE

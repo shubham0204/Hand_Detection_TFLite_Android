@@ -15,7 +15,6 @@
 package com.shubham0204.ml.handdetection
 
 import android.graphics.Bitmap
-import android.view.View
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import kotlinx.coroutines.CoroutineScope
