@@ -18,10 +18,9 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Rect
 import android.os.Build
+import android.view.ViewConfiguration
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
-import org.tensorflow.lite.gpu.CompatibilityList
-import org.tensorflow.lite.gpu.GpuDelegate
 import org.tensorflow.lite.nnapi.NnApiDelegate
 import org.tensorflow.lite.support.common.FileUtil
 import org.tensorflow.lite.support.common.ops.CastOp
@@ -62,7 +61,7 @@ class HandDetectionModel( context: Context ) {
     private val numThreads = 4
     private var interpreter : Interpreter
     // Confidence threshold for NMS
-    private val outputConfidenceThreshold = 0.7f
+    private val outputConfidenceThreshold = 0.9f
 
     private var inputFrameWidth = 0
     private var inputFrameHeight = 0
@@ -72,16 +71,9 @@ class HandDetectionModel( context: Context ) {
     init {
         // Initialize TFLite Interpreter
         val interpreterOptions = Interpreter.Options().apply {
-            // Add the GPU Delegate if supported.
-            // See -> https://www.tensorflow.org/lite/performance/gpu#android
-            if ( CompatibilityList().isDelegateSupportedOnThisDevice ) {
-                Logger.logInfo( "GPU Delegate is supported on this device." )
-                addDelegate( GpuDelegate( CompatibilityList().bestOptionsForThisDevice ))
-            }
-            else {
-                // Number of threads for computation
-                setNumThreads( numThreads )
-            }
+            setNumThreads( numThreads )
+            Logger.logInfo( " kfjskjdf ${ViewConfiguration.get( context ).hasPermanentMenuKey()}")
+
             // Add the NNApiDelegate if supported.
             // See -> https://www.tensorflow.org/lite/performance/nnapi#initializing_the_nnapi_delegate
             if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ) {

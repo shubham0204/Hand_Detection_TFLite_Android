@@ -20,6 +20,7 @@ import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.util.DisplayMetrics
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import androidx.core.graphics.toRectF
@@ -51,6 +52,8 @@ class BoundingBoxOverlay(context : Context, attributeSet : AttributeSet)
         color = Color.YELLOW
     }
 
+    private val displayMetrics = DisplayMetrics()
+
 
     override fun surfaceCreated(p0: SurfaceHolder) {
     }
@@ -71,6 +74,10 @@ class BoundingBoxOverlay(context : Context, attributeSet : AttributeSet)
         if (!areDimsInit) {
             val viewWidth = canvas!!.width.toFloat()
             val viewHeight = canvas.height.toFloat()
+            //context.display?.getRealMetrics( displayMetrics )
+
+            Logger.logInfo( " view $viewWidth $viewHeight")
+            Logger.logInfo( "frame $frameWidth $frameHeight")
             val xFactor: Float = viewWidth / frameWidth.toFloat()
             val yFactor: Float = viewHeight / frameHeight.toFloat()
             // Scale the coordinates

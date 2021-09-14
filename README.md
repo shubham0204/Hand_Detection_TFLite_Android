@@ -3,6 +3,9 @@
 > **An Android app which uses models from [Victor Dibia](https://github.com/victordibia)'s 
 > popular [handtracking](https://github.com/victordibia/handtracking) repo.**
 
+![sample_image_1](images/sample_1.png)
+![sample_image_2](images/sample_2.png)
+
 ## TFLite Conversion Script
 
 A complete step-by-step guide on how to convert the model checkpoints from the 
@@ -20,6 +23,32 @@ The following features are included in the project,
 3. No use of heavy packages like OpenCV to process and display the depth map. The application is coded in a
    *Android* friendly manner.
 4. Works for both front and rear camera and also in portrait and landscape orientations.
+
+As a default, the app works in the landscape mode, as seen in the `AndroidManifest.xml`,
+
+```
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.shubham0204.ml.handdetection">
+
+    ...
+
+    <application
+        ...
+        >
+
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="landscape"
+            >
+            ...
+        </activity>
+
+    </application>
+
+</manifest>
+```
+
+You may set `screenOrientation="portrait"` to use the app in portrait orientation.
 
 Here are the details of the Android project,
 
