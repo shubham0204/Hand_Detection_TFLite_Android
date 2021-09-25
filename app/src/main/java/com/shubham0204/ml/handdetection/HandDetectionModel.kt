@@ -18,7 +18,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Rect
 import android.os.Build
-import android.view.ViewConfiguration
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.nnapi.NnApiDelegate
@@ -72,7 +71,6 @@ class HandDetectionModel( context: Context ) {
         // Initialize TFLite Interpreter
         val interpreterOptions = Interpreter.Options().apply {
             setNumThreads( numThreads )
-            Logger.logInfo( " kfjskjdf ${ViewConfiguration.get( context ).hasPermanentMenuKey()}")
 
             // Add the NNApiDelegate if supported.
             // See -> https://www.tensorflow.org/lite/performance/nnapi#initializing_the_nnapi_delegate
