@@ -59,8 +59,8 @@ class HandDetectionModel( context: Context ) {
     private val modelName = "model.tflite"
     private val numThreads = 4
     private var interpreter : Interpreter
-    // Confidence threshold for NMS
-    private val outputConfidenceThreshold = 0.9f
+    // Confidence threshold for filtering the predictions
+    private val filterThreshold = 0.9f
 
     private var inputFrameWidth = 0
     private var inputFrameHeight = 0
@@ -130,7 +130,7 @@ class HandDetectionModel( context: Context ) {
         val predictions = ArrayList<Prediction>()
         for ( i in boxesFloatArray.indices step 4 ) {
             // Store predictions which have a confidence > threshold
-            if ( scoresFloatArray[ i / 4 ] >= outputConfidenceThreshold ) {
+            if ( scoresFloatArray[ i / 4 ] >= filterThreshold ) {
                 predictions.add(
                     Prediction(
                         getRect( boxesFloatArray.sliceArray( i..i+3 )) ,
