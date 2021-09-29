@@ -105,7 +105,4 @@ class BoundingBoxOverlay(context : Context, attributeSet : AttributeSet)
         }
     }
 
-
-
-
 }
