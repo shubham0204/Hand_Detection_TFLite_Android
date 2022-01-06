@@ -43,7 +43,6 @@ class FrameAnalyser(
 
         // Get the `Bitmap` of the current frame ( with corrected rotation ).
         frameBitmap = BitmapUtils.imageToBitmap( image.image!! , image.imageInfo.rotationDegrees , boundingBoxOverlay.isFrontCameraOn )
-        BitmapUtils.saveBitmap( context , frameBitmap!! , "sample" )
         image.close()
 
         // Configure frameHeight and frameWidth for output2overlay transformation matrix.

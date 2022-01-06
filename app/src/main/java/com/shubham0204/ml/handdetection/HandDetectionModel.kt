@@ -56,11 +56,11 @@ class HandDetectionModel( context: Context ) {
         .build()
 
     // See app/src/main/assets for the TFLite model.
-    private val modelName = "model.tflite"
+    private val modelName = "model_quantized.tflite"
     private val numThreads = 4
     private var interpreter : Interpreter
     // Confidence threshold for filtering the predictions
-    private val filterThreshold = 0.5f
+    private val filterThreshold = 0.8f
 
     private var areInputFrameDimsInitialized = false
     private var inputFrameWidth = 0
@@ -140,7 +140,6 @@ class HandDetectionModel( context: Context ) {
         val predictions = ArrayList<Prediction>()
         for ( i in boxesFloatArray.indices step 4 ) {
             // Store predictions which have a confidence > threshold
-            Logger.logInfo( "tr ${scoresFloatArray[ i / 4 ]}")
             if ( scoresFloatArray[ i / 4 ] >= filterThreshold ) {
                 predictions.add(
                     Prediction(
