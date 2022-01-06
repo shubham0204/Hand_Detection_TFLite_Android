@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
         boundingBoxOverlay.setZOrderOnTop(true)
 
         val handDetectionModel = HandDetectionModel( this )
-        frameAnalyser = FrameAnalyser( handDetectionModel , boundingBoxOverlay )
+        frameAnalyser = FrameAnalyser( this , handDetectionModel , boundingBoxOverlay )
 
         val flipCameraFAB = findViewById<FloatingActionButton>( R.id.flip_camera_fab )
         flipCameraFAB.setOnClickListener {
@@ -88,6 +88,7 @@ class MainActivity : AppCompatActivity() {
             // draw them on the overlay.
             boundingBoxOverlay.isFrontCameraOn = !isFrontCameraOn
             boundingBoxOverlay.areDimsInit = false
+            handDetectionModel.reset()
             isFrontCameraOn = !isFrontCameraOn
         }
 

@@ -60,8 +60,9 @@ class HandDetectionModel( context: Context ) {
     private val numThreads = 4
     private var interpreter : Interpreter
     // Confidence threshold for filtering the predictions
-    private val filterThreshold = 0.9f
+    private val filterThreshold = 0.5f
 
+    private var areInputFrameDimsInitialized = false
     private var inputFrameWidth = 0
     private var inputFrameHeight = 0
 
@@ -84,6 +85,11 @@ class HandDetectionModel( context: Context ) {
     }
 
 
+    fun reset() {
+        areInputFrameDimsInitialized = false
+    }
+
+
     fun flow( cameraFrameBitmap : Bitmap  ) : List<Prediction> {
         return run( cameraFrameBitmap )
     }
@@ -91,8 +97,11 @@ class HandDetectionModel( context: Context ) {
 
     private fun run( inputImage : Bitmap ) : List<Prediction> {
         // Store the width and height of the input frames as they will be used for future transformations.
-        inputFrameWidth = inputImage.width
-        inputFrameHeight = inputImage.height
+        if ( !areInputFrameDimsInitialized ) {
+            inputFrameWidth = inputImage.width
+            inputFrameHeight = inputImage.height
+            areInputFrameDimsInitialized = true
+        }
 
         var tensorImage = TensorImage.fromBitmap( inputImage )
         tensorImage = if ( isQuantized ) {
@@ -102,10 +111,11 @@ class HandDetectionModel( context: Context ) {
             inputImageProcessorNonQuantized.process( tensorImage )
         }
 
-        val confidenceScores = TensorBuffer.createFixedSize( confidenceScoresTensorShape , DataType.FLOAT32 )
         val boundingBoxes = TensorBuffer.createFixedSize( boundingBoxesTensorShape , DataType.FLOAT32 )
+        val confidenceScores = TensorBuffer.createFixedSize( confidenceScoresTensorShape , DataType.FLOAT32 )
         val classes = TensorBuffer.createFixedSize( classesTensorShape , DataType.FLOAT32 )
         val numBoxes = TensorBuffer.createFixedSize( numBoxesTensorShape , DataType.FLOAT32 )
+
         val outputs = mapOf(
             0 to boundingBoxes.buffer ,
             1 to classes.buffer ,
@@ -130,6 +140,7 @@ class HandDetectionModel( context: Context ) {
         val predictions = ArrayList<Prediction>()
         for ( i in boxesFloatArray.indices step 4 ) {
             // Store predictions which have a confidence > threshold
+            Logger.logInfo( "tr ${scoresFloatArray[ i / 4 ]}")
             if ( scoresFloatArray[ i / 4 ] >= filterThreshold ) {
                 predictions.add(
                     Prediction(

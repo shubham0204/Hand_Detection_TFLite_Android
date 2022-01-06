@@ -35,6 +35,15 @@ class BitmapUtils {
         }
 
 
+        // Flip the given `Bitmap` horizontally.
+        // See this SO answer -> https://stackoverflow.com/a/36494192/10878733
+        fun flipBitmap( source: Bitmap ): Bitmap {
+            val matrix = Matrix()
+            matrix.postScale(-1f, 1f, source.width / 2f, source.height / 2f)
+            return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
+        }
+
+
         // Use this method to save a Bitmap to the internal storage ( app-specific storage ) of your device.
         // To see the image, go to "Device File Explorer" -> "data" -> "data" -> "com.ml.quaterion.facenetdetection" -> "files"
         fun saveBitmap(context: Context, image: Bitmap, name: String) {
@@ -45,7 +54,7 @@ class BitmapUtils {
 
         // Convert android.media.Image to android.graphics.Bitmap and rotate it by `rotationDegrees`
         // See the SO answer -> https://stackoverflow.com/a/44486294/10878733
-        fun imageToBitmap( image : Image , rotationDegrees : Int ): Bitmap {
+        fun imageToBitmap( image : Image , rotationDegrees : Int , isFrontCameraOn : Boolean  ): Bitmap {
             val yBuffer = image.planes[0].buffer
             val uBuffer = image.planes[1].buffer
             val vBuffer = image.planes[2].buffer
@@ -60,7 +69,8 @@ class BitmapUtils {
             val out = ByteArrayOutputStream()
             yuvImage.compressToJpeg(Rect(0, 0, yuvImage.width, yuvImage.height), 100, out)
             val yuv = out.toByteArray()
-            return rotateBitmap( BitmapFactory.decodeByteArray(yuv, 0, yuv.size) , rotationDegrees.toFloat() )
+            val output = rotateBitmap( BitmapFactory.decodeByteArray(yuv, 0, yuv.size) , rotationDegrees.toFloat() )
+            return if ( isFrontCameraOn ) { flipBitmap( output ) } else { output }
         }
 
     }

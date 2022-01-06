@@ -74,15 +74,12 @@ class BoundingBoxOverlay(context : Context, attributeSet : AttributeSet)
         if (!areDimsInit) {
             val viewWidth = canvas!!.width.toFloat()
             val viewHeight = canvas.height.toFloat()
-            //context.display?.getRealMetrics( displayMetrics )
 
             val xFactor: Float = viewWidth / frameWidth.toFloat()
             val yFactor: Float = viewHeight / frameHeight.toFloat()
             // Scale the coordinates
             output2OverlayTransform.preScale(xFactor, yFactor)
             if ( isFrontCameraOn ) {
-                // Mirror the coordinates when using the front lens.
-                output2OverlayTransform.postScale(-1f, 1f, viewWidth / 2f, viewHeight / 2f)
                 Logger.logInfo( "Transformation matrix configured for front camera." )
             }
             else {

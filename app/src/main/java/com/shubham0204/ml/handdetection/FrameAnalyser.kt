@@ -14,6 +14,7 @@
  */
 package com.shubham0204.ml.handdetection
 
+import android.content.Context
 import android.graphics.Bitmap
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
@@ -24,6 +25,7 @@ import kotlinx.coroutines.withContext
 
 // Image Analyser for performing hand detection on camera frames.
 class FrameAnalyser(
+    private val context: Context ,
     private val handDetectionModel: HandDetectionModel ,
     private val boundingBoxOverlay: BoundingBoxOverlay ) : ImageAnalysis.Analyzer {
 
@@ -40,7 +42,8 @@ class FrameAnalyser(
         isFrameProcessing = true
 
         // Get the `Bitmap` of the current frame ( with corrected rotation ).
-        frameBitmap = BitmapUtils.imageToBitmap( image.image!! , image.imageInfo.rotationDegrees )
+        frameBitmap = BitmapUtils.imageToBitmap( image.image!! , image.imageInfo.rotationDegrees , boundingBoxOverlay.isFrontCameraOn )
+        BitmapUtils.saveBitmap( context , frameBitmap!! , "sample" )
         image.close()
 
         // Configure frameHeight and frameWidth for output2overlay transformation matrix.
@@ -50,7 +53,7 @@ class FrameAnalyser(
             boundingBoxOverlay.frameWidth = frameBitmap!!.width
         }
 
-        CoroutineScope( Dispatchers.Main ).launch {
+        CoroutineScope( Dispatchers.Default ).launch {
             runModel( frameBitmap!! )
         }
     }
