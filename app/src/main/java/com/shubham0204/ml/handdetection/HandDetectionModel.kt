@@ -56,7 +56,7 @@ class HandDetectionModel( context: Context ) {
         .build()
 
     // See app/src/main/assets for the TFLite model.
-    private val modelName = "model_quantized.tflite"
+    private val modelName = "model.tflite"
     private val numThreads = 4
     private var interpreter : Interpreter
     // Confidence threshold for filtering the predictions
